@@ -179,7 +179,6 @@ int LinuxParser::RunningProcesses() {
       }
     }
   }
-
   return procsrunning;  // 0;
 }
 
