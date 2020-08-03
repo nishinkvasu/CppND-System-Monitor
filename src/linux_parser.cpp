@@ -204,19 +204,46 @@ string LinuxParser::Uid(int pid) {
       std::istringstream linestream(line);
       linestream >> attribute;
       if(attribute == "Uid:"){
-        std::cout << "Test -1 \n";
         linestream >> uid;
         break;
       }
     }
   }
-  std::cout << uid << " test\n";
+//   std::cout << uid << " test\n";
   return uid; 
 } 
 
 // TODO: Read and return the user associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::User(int pid[[maybe_unused]]) { return string(); }
+string LinuxParser::User(int pid) { 
+  // need to match uid to username here
+  // name:password:UID:GID:GECOS:directory:shell
+  // parse each line and compare uid to the uid from the uid function
+  // when it matches we pass the string
+
+  string uidr = LinuxParser::Uid(pid);
+  std::ifstream filestream(kPasswordPath);
+  string line;
+  string name, pwd, uid;
+  
+  if(filestream.is_open()){
+  	while(std::getline(filestream, line)){
+     
+      // will need to first replace the ':' with space so can stream one 
+      // after the other
+      std::replace(line.begin(), line.end(), ':', ' ');
+      // then pass the line to linestream
+      std::istringstream linestream(line);
+      linestream >> name >> pwd >> uid;
+      //std::cout << uid << "\n";
+      if(uidr == uid){
+        //std::cout << name << "\n";
+        break;
+      }
+    }
+  }
+  return name; 
+}
 
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
