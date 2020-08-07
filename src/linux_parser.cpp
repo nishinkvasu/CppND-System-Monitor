@@ -184,7 +184,7 @@ int LinuxParser::RunningProcesses() {
 
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Command(int pid[[maybe_unused]]) { return string(); }
+string LinuxParser::Command(int pid) { return string(); }
 
 // TODO: Read and return the memory used by a process
 // REMOVE: [[maybe_unused]] once you define the function
@@ -264,4 +264,28 @@ string LinuxParser::User(int pid) {
 
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::UpTime(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::UpTime(int pid) { 
+  // can be retrieved from the command /proc/[pid]/stat
+  // item 22 is the starttime
+  // measured in clock ticks, need to convert to seconds
+  // divide the "clock ticks" value by sysconf(_SC_CLK_TCK)
+  string line;
+  string attribute;
+  long uptime;
+  std::ifstream filestream(kProcDirectory + to_string(pid) + kStatFilename);
+  if(filestream.is_open()){
+    std::getline(filestream, line);
+    std::istringstream linestream(line);
+    // item 22 is the starttime
+    for(auto i = 0; i < 22; i++)
+      linestream >> attribute;
+    
+    uptime = std::stol(attribute);
+    
+    // convert ticks to seconds
+    uptime = uptime/ (sysconf(_SC_CLK_TCK));
+    //std::cout << uptime << "ss \n";
+  }
+  
+  return uptime; 
+}
