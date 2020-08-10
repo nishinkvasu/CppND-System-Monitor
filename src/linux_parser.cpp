@@ -122,25 +122,25 @@ long LinuxParser::Jiffies() { return 0; }
 
 // TODO: Read and return the number of active jiffies for a PID
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid) { 
-      // 14 - utime, 15 - stime, 16 - cutime, 17 - cstime, 22 - start / ime
-    // activejiffies = utime + stime + cutime + cstime
+long LinuxParser::ActiveJiffies(int pid) {
+  // 14 - utime, 15 - stime, 16 - cutime, 17 - cstime, 22 - start / ime
+  // activejiffies = utime + stime + cutime + cstime
   long actjiffies = 0;
   string line;
   string attribute;
   std::ifstream filestream(kProcDirectory + to_string(pid) + kStatFilename);
-  if(filestream.is_open()){
-     std::getline(filestream, line);
-     std::istringstream linestream(line);
-     for (auto i = 0; i <17; i++){
-       linestream >> attribute;
-       if(i >= 13){
-         actjiffies += std::stol(attribute);
-       }
-     }
+  if (filestream.is_open()) {
+    std::getline(filestream, line);
+    std::istringstream linestream(line);
+    for (auto i = 0; i < 17; i++) {
+      linestream >> attribute;
+      if (i >= 13) {
+        actjiffies += std::stol(attribute);
+      }
+    }
   }
-  //std::cout << actjiffies << " x \n";
-  return actjiffies; 
+  // std::cout << actjiffies << " x \n";
+  return actjiffies;
 }
 
 // TODO: Read and return the number of active jiffies for the system
@@ -150,19 +150,18 @@ long LinuxParser::ActiveJiffies() { return 0; }
 long LinuxParser::IdleJiffies() { return 0; }
 
 // TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { 
+vector<string> LinuxParser::CpuUtilization() {
   vector<string> CpuAttributes;
   string line;
   string attribute;
   std::ifstream filestream(kProcDirectory + kStatFilename);
-  if(filestream.is_open()){
+  if (filestream.is_open()) {
     std::getline(filestream, line);
     std::istringstream linestream(line);
-    linestream >> attribute; // exclude the 'cpu tag'
-    while(linestream >> attribute)
-      CpuAttributes.push_back(attribute);
+    linestream >> attribute;  // exclude the 'cpu tag'
+    while (linestream >> attribute) CpuAttributes.push_back(attribute);
   }
-  return CpuAttributes; 
+  return CpuAttributes;
 }
 
 // TODO: Read and return the total number of processes

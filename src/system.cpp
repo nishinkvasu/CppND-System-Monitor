@@ -28,22 +28,17 @@ vector<Process>& System::Processes() {
   // vector with process objects only populate the ids now not required to
   // populate all data now , can be done when displaying
   vector<int> Pids = LinuxParser::Pids();
-  processes_.clear(); 
-  // this is required to create a new set of vector entries everytime, 
+  processes_.clear();
+  // this is required to create a new set of vector entries everytime,
   // else will run out of memory;
-  for(int pid : Pids){ // range based for loop
+  for (int pid : Pids) {  // range based for loop
     Process proc;
     proc.Pid(pid);
     processes_.emplace_back(proc);
   }
-  // test code - Start
-  // Process proc;
-  // proc.Pid(Pids[0]);
-  // processes_.emplace_back(proc);
-  // test code - End
+  // sort the processes based on memory usage
   std::sort(processes_.begin(), processes_.end());
   return processes_;
-
 }
 
 // TODO: Return the system's kernel identifier (string)
