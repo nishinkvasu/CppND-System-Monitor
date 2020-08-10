@@ -24,19 +24,26 @@ Processor& System::Cpu() { return cpu_; }
 
 // TODO: Return a container composed of the system's processes
 vector<Process>& System::Processes() {
-  // need to iterate through the processes from the parser and populate the vector with process objects
-  // only populate the ids now
-  // not required to populate all data now , can be done when displaying
+  // need to iterate through the processes from the parser and populate the
+  // vector with process objects only populate the ids now not required to
+  // populate all data now , can be done when displaying
   vector<int> Pids = LinuxParser::Pids();
-  // for(int pid : Pids){ // range based for loop
-  //   Process proc;
-  //   proc.Pid(pid);
-  //   //processes_.push_back(proc);
-  // }
-  Process proc;
-  proc.Pid(Pids[0]);
-  processes_.push_back(proc);
-  return processes_; 
+  processes_.clear(); 
+  // this is required to create a new set of vector entries everytime, 
+  // else will run out of memory;
+  for(int pid : Pids){ // range based for loop
+    Process proc;
+    proc.Pid(pid);
+    processes_.emplace_back(proc);
+  }
+  // test code - Start
+  // Process proc;
+  // proc.Pid(Pids[0]);
+  // processes_.emplace_back(proc);
+  // test code - End
+  std::sort(processes_.begin(), processes_.end());
+  return processes_;
+
 }
 
 // TODO: Return the system's kernel identifier (string)
@@ -46,9 +53,7 @@ std::string System::Kernel() { return System::Kernel_; }
 float System::MemoryUtilization() { return LinuxParser::MemoryUtilization(); }
 
 // TODO: Return the operating system name
-std::string System::OperatingSystem() {
-  return System::OperatingSystem_;
-}
+std::string System::OperatingSystem() { return System::OperatingSystem_; }
 
 // TODO: Return the number of processes actively running on the system
 int System::RunningProcesses() { return LinuxParser::RunningProcesses(); }
